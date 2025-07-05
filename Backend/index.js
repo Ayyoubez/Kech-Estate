@@ -19,7 +19,15 @@ mongoose
 
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
-
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal server issue";
+  return res.status(statusCode).json({
+    success: false,
+    statusCode,
+    message,
+  });
+});
 app.listen(5000, () => {
   console.log(" server running on 5000...");
 });
