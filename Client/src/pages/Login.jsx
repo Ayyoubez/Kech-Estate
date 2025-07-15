@@ -1,5 +1,64 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  return <div>Login</div>;
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+    // console.log(formData);
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        setLoading(false);
+        setError(data.message);
+        return;
+      }
+      navigate("/");
+    } catch (error) {
+      setLoading(false);
+      setError(error);
+    }
+  };
+  return (
+    <div className="flex flex-col gap-4 max-w-xl mx-auto my-8 p-3">
+      <h1 className="text-center text-slate-800 font-semibold text-3xl ">
+        Login
+      </h1>
+      <form onSubmit={handleSubmit} className="flex flex-col p-3 gap-4">
+        <input
+          type="email"
+          placeholder="Email"
+          id="email"
+          className="border rounded-lg p-3 border-slate-700"
+          onChange={handleChange}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          id="password"
+          className="border rounded-lg p-3 border-slate-700"
+          onChange={handleChange}
+        />
+        <button
+          disabled={loading}
+          className="text-white bg-slate-700 p-3 rounded-lg hover:opacity-95 disabled:opacity-80 cursor-pointer transition-all"
+        >
+          {loading ? "Loading..." : "Sign In"}
+        </button>
+        {error && <p className="text-red-500">{error}</p>}
+      </form>
+    </div>
+  );
 }

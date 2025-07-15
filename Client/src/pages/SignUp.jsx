@@ -1,24 +1,39 @@
-import React from "react";
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const handleChange = (e) => {
     const { id, value } = e.target;
 
     setFormData({ ...formData, [id]: value });
   };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const res = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-    const data = await res.json();
-    console.log(data);
+    try {
+      setLoading(true);
+      e.preventDefault();
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        setLoading(false);
+        setError(data.message);
+        return;
+      }
+      navigate("/login");
+    } catch (error) {
+      setLoading(false);
+      setError(error.message);
+    }
   };
   return (
     <div className="flex flex-col max-w-xl gap-4 mx-auto my-8">
@@ -47,9 +62,21 @@ export default function SignUp() {
           className="border p-3 rounded-lg border-slate-500"
           onChange={handleChange}
         />
-        <button className="bg-slate-700 rounded-lg text-white p-3 uppercase hover:opacity-95 disabled:opacity-80 cursor-pointer transition-all duration-300">
-          Submit
+
+        <button
+          disabled={loading}
+          className="bg-slate-700 rounded-lg text-white p-3 uppercase hover:opacity-95 disabled:opacity-80 cursor-pointer transition-all duration-300"
+        >
+          {loading ? "Loading..." : "Sign Up"}
         </button>
+        <p>
+          Already have an account ?{" "}
+          <Link to={"/login"}>
+            {" "}
+            <span className="text-blue-500 pointer">Sign In</span>
+          </Link>
+        </p>
+        {error && <p className="text-red-500">User already exist</p>}
       </form>
     </div>
   );
