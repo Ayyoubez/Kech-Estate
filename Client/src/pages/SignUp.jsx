@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import OAuth from "../Components/OAuth";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -69,6 +70,7 @@ export default function SignUp() {
         >
           {loading ? "Loading..." : "Sign Up"}
         </button>
+        <OAuth />
         <p>
           Already have an account ?{" "}
           <Link to={"/login"}>

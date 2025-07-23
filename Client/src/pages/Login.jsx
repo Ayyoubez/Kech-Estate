@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   signInFailure,
   signInStart,
   signInSuccess,
 } from "../redux/user/userSlice.js";
+import OAuth from "../Components/OAuth.jsx";
 
 export default function Login() {
   // const user = useSelector(state)=>state.user.);
@@ -63,6 +64,15 @@ export default function Login() {
         >
           {loading ? "Loading..." : "Sign In"}
         </button>
+        <OAuth />
+        <p>
+          Don&#39;t have an account ?{" "}
+          <Link to={"/Sign-up"}>
+            {" "}
+            <span className="text-blue-500 pointer">Sign up</span>
+          </Link>
+        </p>
+        {error && <p className="text-red-500">User already exist</p>}
         {error && <p className="text-red-500">{error}</p>}
       </form>
     </div>
