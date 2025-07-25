@@ -17,6 +17,11 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    avatar: {
+      type: String,
+      default:
+        "https://cdn3.iconfinder.com/data/icons/business-avatar-1/512/3_avatar-512.png",
+    },
   },
   { timestamps: true }
 );
